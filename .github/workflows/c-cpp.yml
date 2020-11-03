@@ -15,7 +15,7 @@ jobs:
     - name: Install gtest
       run: sudo apt-get install libgtest-dev && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp *.a /usr/lib && sudo ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a && sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
     - name: Install gmock
-      run: sudo apt-get install google-mock
+      run: sudo apt-get install libgmock-dev && cd /usr/src/gmock && sudo mkdir build && sudo cmake .. && sudo make && sudo cp *.a /usr/lib
     - uses: actions/checkout@v2
     - name: Build
       run: make
