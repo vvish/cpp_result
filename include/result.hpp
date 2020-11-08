@@ -7,7 +7,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-namespace result
+namespace respp
 {
 template <typename Iterator>
 class iterator_pair {
@@ -112,7 +112,7 @@ constexpr Ut place_category(Ut container, C1 c1, C2 c2, Cs... cs)
 }  // namespace detail
 
 template <typename Token, uint8_t BitWidth>
-struct category {
+struct category_t {
     static constexpr uint8_t bit_width = BitWidth;
     using underlaying_type = uint32_t;
     underlaying_type value;  // value should be of minimal width
@@ -120,15 +120,15 @@ struct category {
 
 template <typename Token, uint8_t BitWidth>
 constexpr bool operator==(
-    category<Token, BitWidth> const &lhs, category<Token, BitWidth> const &rhs)
+    category_t<Token, BitWidth> const &lhs, category_t<Token, BitWidth> const &rhs)
 {
     return lhs.value == rhs.value;
 }
 
 template <typename Token, uint8_t BitWidth>
 constexpr bool operator==(
-    category<Token, BitWidth> const &lhs,
-    typename category<Token, BitWidth>::underlaying_type rhs)
+    category_t<Token, BitWidth> const &lhs,
+    typename category_t<Token, BitWidth>::underlaying_type rhs)
 {
     return lhs.value == rhs;
 }
@@ -369,11 +369,11 @@ constexpr bool is_success(result_t<Ut, Cs...> result)
     return result_t<Ut, Cs...>::success == result;
 }
 
-}  // namespace result
+}  // namespace respp
 
 #define MAKE_RESULT_CATEGORY(name, w) \
     struct name##TAG {};              \
-    using name = ::result::category<name##TAG, w>
+    using name = ::respp::category_t<name##TAG, w>
 
 #define MAKE_RESULT_TYPE(name, ut, ...) \
-    using name = ::result::result_t<ut, __VA_ARGS__>
+    using name = ::respp::result_t<ut, __VA_ARGS__>
