@@ -9,16 +9,16 @@ TEST(Resuls, ManualDeclaration_8_BitWidth)
     struct TestDomain {};
     struct TestSubDomain {};
 
-    using Domain = result::category<TestDomain, 2>;
-    using SubDomain = result::category<TestSubDomain, 3>;
+    using Domain = respp::category_t<TestDomain, 2>;
+    using SubDomain = respp::category_t<TestSubDomain, 3>;
 
-    using TestResult = result::result_t<uint8_t, Domain, SubDomain>;
+    using TestResult = respp::result_t<uint8_t, Domain, SubDomain>;
 
     TestResult r{0b01111101};
 
-    EXPECT_EQ(result::get_category<Domain>(r).value, 0b01);
-    EXPECT_EQ(result::get_category<SubDomain>(r).value, 0b111);
-    EXPECT_EQ(result::get_code(r), 0b101);
+    EXPECT_EQ(respp::get_category<Domain>(r).value, 0b01);
+    EXPECT_EQ(respp::get_category<SubDomain>(r).value, 0b111);
+    EXPECT_EQ(respp::get_code(r), 0b101);
 }
 
 MAKE_RESULT_CATEGORY(Domain, 2);
@@ -85,29 +85,29 @@ constexpr auto backendAccessError
 }  // namespace application
 }  // namespace test_errors
 
-using aggregate_result = result::aggregate_result_t<uint32_t, TestResult>;
+using aggregate_result = respp::aggregate_result_t<uint32_t, TestResult>;
 
 TEST(AggregateError_4x8bit, Intialized_with_one_error)
 {
     aggregate_result e(test_errors::drivers::ethLinkError);
 
     EXPECT_EQ(
-        result::get_category<Domain>(e[0]), test_errors::drivers::Drivers);
+        respp::get_category<Domain>(e[0]), test_errors::drivers::Drivers);
     EXPECT_EQ(
-        result::get_category<SubDomain>(e[0]), test_errors::drivers::Ethernet);
-    EXPECT_EQ(result::get_code(e[0]), test_errors::drivers::linkErrorCode);
+        respp::get_category<SubDomain>(e[0]), test_errors::drivers::Ethernet);
+    EXPECT_EQ(respp::get_code(e[0]), test_errors::drivers::linkErrorCode);
 
-    EXPECT_EQ(result::get_category<Domain>(e[1]), 0);
-    EXPECT_EQ(result::get_category<SubDomain>(e[1]), 0);
-    EXPECT_EQ(result::get_code(e[1]), 0);
+    EXPECT_EQ(respp::get_category<Domain>(e[1]), 0);
+    EXPECT_EQ(respp::get_category<SubDomain>(e[1]), 0);
+    EXPECT_EQ(respp::get_code(e[1]), 0);
 
-    EXPECT_EQ(result::get_category<Domain>(e[2]), 0);
-    EXPECT_EQ(result::get_category<SubDomain>(e[2]), 0);
-    EXPECT_EQ(result::get_code(e[2]), 0);
+    EXPECT_EQ(respp::get_category<Domain>(e[2]), 0);
+    EXPECT_EQ(respp::get_category<SubDomain>(e[2]), 0);
+    EXPECT_EQ(respp::get_code(e[2]), 0);
 
-    EXPECT_EQ(result::get_category<Domain>(e[3]), 0);
-    EXPECT_EQ(result::get_category<SubDomain>(e[3]), 0);
-    EXPECT_EQ(result::get_code(e[3]), 0);
+    EXPECT_EQ(respp::get_category<Domain>(e[3]), 0);
+    EXPECT_EQ(respp::get_category<SubDomain>(e[3]), 0);
+    EXPECT_EQ(respp::get_code(e[3]), 0);
 }
 
 TEST(AggregateError_4x8bit, Intialized_with_one_error_appended_with_second)
@@ -116,28 +116,28 @@ TEST(AggregateError_4x8bit, Intialized_with_one_error_appended_with_second)
     e.append(test_errors::networking::connectionAbortedError);
 
     EXPECT_EQ(
-        result::get_category<Domain>(e[0]), test_errors::drivers::Drivers);
+        respp::get_category<Domain>(e[0]), test_errors::drivers::Drivers);
     EXPECT_EQ(
-        result::get_category<SubDomain>(e[0]), test_errors::drivers::Ethernet);
-    EXPECT_EQ(result::get_code(e[0]), test_errors::drivers::linkErrorCode);
+        respp::get_category<SubDomain>(e[0]), test_errors::drivers::Ethernet);
+    EXPECT_EQ(respp::get_code(e[0]), test_errors::drivers::linkErrorCode);
 
     EXPECT_EQ(
-        result::get_category<Domain>(e[1]),
+        respp::get_category<Domain>(e[1]),
         test_errors::networking::Networking);
     EXPECT_EQ(
-        result::get_category<SubDomain>(e[1]),
+        respp::get_category<SubDomain>(e[1]),
         test_errors::networking::TcpIpStack);
     EXPECT_EQ(
-        result::get_code(e[1]),
+        respp::get_code(e[1]),
         test_errors::networking::connectionAbortedErrorCode);
 
-    EXPECT_EQ(result::get_category<Domain>(e[2]), 0);
-    EXPECT_EQ(result::get_category<SubDomain>(e[2]), 0);
-    EXPECT_EQ(result::get_code(e[2]), 0);
+    EXPECT_EQ(respp::get_category<Domain>(e[2]), 0);
+    EXPECT_EQ(respp::get_category<SubDomain>(e[2]), 0);
+    EXPECT_EQ(respp::get_code(e[2]), 0);
 
-    EXPECT_EQ(result::get_category<Domain>(e[3]), 0);
-    EXPECT_EQ(result::get_category<SubDomain>(e[3]), 0);
-    EXPECT_EQ(result::get_code(e[3]), 0);
+    EXPECT_EQ(respp::get_category<Domain>(e[3]), 0);
+    EXPECT_EQ(respp::get_category<SubDomain>(e[3]), 0);
+    EXPECT_EQ(respp::get_code(e[3]), 0);
 }
 
 TEST(
@@ -152,38 +152,38 @@ TEST(
       << te::application::rpcClientError;
 
     EXPECT_EQ(
-        result::get_category<Domain>(e[0]), test_errors::drivers::Drivers);
+        respp::get_category<Domain>(e[0]), test_errors::drivers::Drivers);
     EXPECT_EQ(
-        result::get_category<SubDomain>(e[0]), test_errors::drivers::Ethernet);
-    EXPECT_EQ(result::get_code(e[0]), test_errors::drivers::linkErrorCode);
+        respp::get_category<SubDomain>(e[0]), test_errors::drivers::Ethernet);
+    EXPECT_EQ(respp::get_code(e[0]), test_errors::drivers::linkErrorCode);
 
     EXPECT_EQ(
-        result::get_category<Domain>(e[1]),
+        respp::get_category<Domain>(e[1]),
         test_errors::networking::Networking);
     EXPECT_EQ(
-        result::get_category<SubDomain>(e[1]),
+        respp::get_category<SubDomain>(e[1]),
         test_errors::networking::TcpIpStack);
     EXPECT_EQ(
-        result::get_code(e[1]),
+        respp::get_code(e[1]),
         test_errors::networking::connectionAbortedErrorCode);
 
     EXPECT_EQ(
-        result::get_category<Domain>(e[2]),
+        respp::get_category<Domain>(e[2]),
         test_errors::infrastructure::Infrastructure);
     EXPECT_EQ(
-        result::get_category<SubDomain>(e[2]),
+        respp::get_category<SubDomain>(e[2]),
         test_errors::infrastructure::Remote);
     EXPECT_EQ(
-        result::get_code(e[2]),
+        respp::get_code(e[2]),
         test_errors::infrastructure::messageSendingErrorCode);
 
     EXPECT_EQ(
-        result::get_category<Domain>(e[3]),
+        respp::get_category<Domain>(e[3]),
         test_errors::application::Application);
     EXPECT_EQ(
-        result::get_category<SubDomain>(e[3]),
+        respp::get_category<SubDomain>(e[3]),
         test_errors::application::Client);
-    EXPECT_EQ(result::get_code(e[3]), test_errors::application::rpcErrorCode);
+    EXPECT_EQ(respp::get_code(e[3]), test_errors::application::rpcErrorCode);
 }
 
 TEST(
@@ -197,21 +197,21 @@ TEST(
 
     ASSERT_NE(it, end);
 
-    EXPECT_EQ(result::get_category<Domain>(*it), test_errors::drivers::Drivers);
+    EXPECT_EQ(respp::get_category<Domain>(*it), test_errors::drivers::Drivers);
     EXPECT_EQ(
-        result::get_category<SubDomain>(*it), test_errors::drivers::Ethernet);
-    EXPECT_EQ(result::get_code(*it), test_errors::drivers::linkErrorCode);
+        respp::get_category<SubDomain>(*it), test_errors::drivers::Ethernet);
+    EXPECT_EQ(respp::get_code(*it), test_errors::drivers::linkErrorCode);
 
     ++it;
     ASSERT_NE(it, end);
 
     EXPECT_EQ(
-        result::get_category<Domain>(*it), test_errors::networking::Networking);
+        respp::get_category<Domain>(*it), test_errors::networking::Networking);
     EXPECT_EQ(
-        result::get_category<SubDomain>(*it),
+        respp::get_category<SubDomain>(*it),
         test_errors::networking::TcpIpStack);
     EXPECT_EQ(
-        result::get_code(*it),
+        respp::get_code(*it),
         test_errors::networking::connectionAbortedErrorCode);
 
     ++it;
@@ -235,21 +235,21 @@ TEST(AggregateError_4x8bit, Initialized_with_four_errors_loop_via_iterator)
     auto i = 0;
     for (const auto it : e.iterate_errors()) {
         EXPECT_EQ(
-            result::get_category<Domain>(it),
-            result::get_category<Domain>(results[i]));
+            respp::get_category<Domain>(it),
+            respp::get_category<Domain>(results[i]));
         EXPECT_EQ(
-            result::get_category<SubDomain>(it),
-            result::get_category<SubDomain>(results[i]));
-        EXPECT_EQ(result::get_code(it), result::get_code(results[i++]));
+            respp::get_category<SubDomain>(it),
+            respp::get_category<SubDomain>(results[i]));
+        EXPECT_EQ(respp::get_code(it), respp::get_code(results[i++]));
     }
 
     EXPECT_EQ(i, 4);
 }
 
-using aggregate_result_replace_topmost = result::aggregate_result_t<
+using aggregate_result_replace_topmost = respp::aggregate_result_t<
     uint32_t,
     TestResult,
-    result::detail::replace_topmost<uint32_t, TestResult>>;
+    respp::detail::replace_topmost<uint32_t, TestResult>>;
 
 TEST(
     AggregateError_4x8bit_Replace_Topmost,
@@ -265,39 +265,39 @@ TEST(
     e << te::application::backendAccessError;
 
     EXPECT_EQ(
-        result::get_category<Domain>(e[0]), test_errors::drivers::Drivers);
+        respp::get_category<Domain>(e[0]), test_errors::drivers::Drivers);
     EXPECT_EQ(
-        result::get_category<SubDomain>(e[0]), test_errors::drivers::Ethernet);
-    EXPECT_EQ(result::get_code(e[0]), test_errors::drivers::linkErrorCode);
+        respp::get_category<SubDomain>(e[0]), test_errors::drivers::Ethernet);
+    EXPECT_EQ(respp::get_code(e[0]), test_errors::drivers::linkErrorCode);
 
     EXPECT_EQ(
-        result::get_category<Domain>(e[1]),
+        respp::get_category<Domain>(e[1]),
         test_errors::networking::Networking);
     EXPECT_EQ(
-        result::get_category<SubDomain>(e[1]),
+        respp::get_category<SubDomain>(e[1]),
         test_errors::networking::TcpIpStack);
     EXPECT_EQ(
-        result::get_code(e[1]),
+        respp::get_code(e[1]),
         test_errors::networking::connectionAbortedErrorCode);
 
     EXPECT_EQ(
-        result::get_category<Domain>(e[2]),
+        respp::get_category<Domain>(e[2]),
         test_errors::infrastructure::Infrastructure);
     EXPECT_EQ(
-        result::get_category<SubDomain>(e[2]),
+        respp::get_category<SubDomain>(e[2]),
         test_errors::infrastructure::Remote);
     EXPECT_EQ(
-        result::get_code(e[2]),
+        respp::get_code(e[2]),
         test_errors::infrastructure::messageSendingErrorCode);
 
     EXPECT_EQ(
-        result::get_category<Domain>(e[3]),
+        respp::get_category<Domain>(e[3]),
         test_errors::application::Application);
     EXPECT_EQ(
-        result::get_category<SubDomain>(e[3]),
+        respp::get_category<SubDomain>(e[3]),
         test_errors::application::Client);
     EXPECT_EQ(
-        result::get_code(e[3]),
+        respp::get_code(e[3]),
         test_errors::application::backendAccessErrorCode);
 }
 
