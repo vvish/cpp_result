@@ -87,6 +87,16 @@ constexpr auto backendAccessError
 
 using aggregate_result = respp::aggregate_result_t<uint32_t, TestResult>;
 
+TEST(AggregateError_4x8bit, Intialized_with_default_value)
+{
+    aggregate_result e;
+
+    EXPECT_TRUE(respp::is_success(e));
+    
+    aggregate_result::error_iterator_t it(e), end;
+    ASSERT_EQ(it, end);
+}
+
 TEST(AggregateError_4x8bit, Intialized_with_one_error)
 {
     aggregate_result e(test_errors::drivers::ethLinkError);
