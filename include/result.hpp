@@ -120,7 +120,8 @@ struct category_t {
 
 template <typename Token, uint8_t BitWidth>
 constexpr bool operator==(
-    category_t<Token, BitWidth> const &lhs, category_t<Token, BitWidth> const &rhs)
+    category_t<Token, BitWidth> const &lhs,
+    category_t<Token, BitWidth> const &rhs)
 {
     return lhs.value == rhs.value;
 }
@@ -238,6 +239,8 @@ struct aggregate_result_t {
         capacity >= 2,
         "The aggregate result should have space for at least two errors");
 
+    static constexpr aggregate_result_t success{};
+
     underlaying_type container;
 
     class error_iterator_t {
@@ -338,6 +341,12 @@ struct aggregate_result_t {
         r.append(result);
         return r;
     }
+
+    friend constexpr bool operator==(
+        aggregate_result_t const &lhs, aggregate_result_t const &rhs)
+    {
+        return lhs.container == rhs.container;
+    }
 };
 
 template <typename CatToFind, typename Ut, typename... Cs>
@@ -369,6 +378,13 @@ constexpr bool is_success(result_t<Ut, Cs...> result)
     return result_t<Ut, Cs...>::success == result;
 }
 
+template <typename Ut, typename Result, typename PlacementStrategy>
+constexpr bool is_success(
+    aggregate_result_t<Ut, Result, PlacementStrategy> result)
+{
+    return aggregate_result_t<Ut, Result, PlacementStrategy>::success == result;
+}
+
 }  // namespace respp
 
 #define MAKE_RESULT_CATEGORY(name, w) \
@@ -377,3 +393,6 @@ constexpr bool is_success(result_t<Ut, Cs...> result)
 
 #define MAKE_RESULT_TYPE(name, ut, ...) \
     using name = ::respp::result_t<ut, __VA_ARGS__>
+
+#define MAKE_AGGREGATE_RESULT_TYPE(name, ut, single_result) \
+    using name = ::respp::aggregate_result_t<ut, single_result>;
