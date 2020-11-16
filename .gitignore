@@ -33,3 +33,11 @@
 
 # Executable dir
 bin/
+
+# Coverage dir
+coverage/
+
+# Coverage/profiling artifacts
+*.gcda
+*.gcno
+*.gcov

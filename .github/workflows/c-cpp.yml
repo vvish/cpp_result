@@ -19,5 +19,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build
       run: make
-    - name: Run tests
-      run: make test
+    - name: Run tests and produce code coverage
+      run: make code-coverage
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
