@@ -1,5 +1,4 @@
 TEST_LIBS = -lgmock -lgtest -lgtest_main -lpthread -L/usr/lib
-TEST_CXX_FLAGS = --coverage
 TEST_TARGETS = result_test
 TEST_DIR = test
 
@@ -12,11 +11,11 @@ COVERAGE_DIR = coverage
 
 COVERAGE_CXX_FLAGS = -O0 --coverage
 
-test-coverage: CXX_FLAGS += $(COVERAGE_CXX_FLAGS)
+code-coverage: CXX_FLAGS += $(COVERAGE_CXX_FLAGS)
 
 $(TEST_TARGETS): % : $(TEST_DIR)/%.cpp
 	mkdir -p $(OUT_DIR)
-	g++ $(CXX_FLAGS) $(TEST_CXX_FLAGS) -o $(OUT_DIR)/$@ $< $(TEST_LIBS)
+	g++ $(CXX_FLAGS) -o $(OUT_DIR)/$@ $< $(TEST_LIBS)
 
 $(EXAMPLE_TARGETS): % : $(EXAMPLE_DIR)/%.cpp
 	mkdir -p $(OUT_DIR)
@@ -25,7 +24,7 @@ $(EXAMPLE_TARGETS): % : $(EXAMPLE_DIR)/%.cpp
 test: $(TEST_TARGETS)
 	./$(OUT_DIR)/$<
 
-test-coverage: $(TEST_TARGETS)
+code-coverage: $(TEST_TARGETS)
 	./$(OUT_DIR)/$<
 	mkdir -p $(COVERAGE_DIR)
 	mv *.gcda *.gcno $(COVERAGE_DIR)
@@ -36,4 +35,4 @@ clean:
 	rm -f $(addprefix $(COVERAGE_DIR)/, *.gcda *.gcno)
 	rmdir --ignore-fail-on-non-empty $(COVERAGE_DIR)
 	
-.PHONY: test test-coverage clean
+.PHONY: test code-coverage clean
