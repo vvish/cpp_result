@@ -7,9 +7,9 @@ EXAMPLE_DIR = examples
 
 CXX_FLAGS = -std=c++17 -Iinclude
 OUT_DIR = bin
-COVERAGE_DIR = coverage
 
 COVERAGE_CXX_FLAGS = -O0 --coverage
+COVERAGE_DIR = coverage
 
 code-coverage: CXX_FLAGS += $(COVERAGE_CXX_FLAGS)
 
