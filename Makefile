@@ -8,6 +8,11 @@ EXAMPLE_DIR = examples
 
 CXX_FLAGS = -std=c++17 -Iinclude
 OUT_DIR = bin
+COVERAGE_DIR = coverage
+
+COVERAGE_CXX_FLAGS = -O0 --coverage
+
+test-coverage: CXX_FLAGS += $(COVERAGE_CXX_FLAGS)
 
 $(TEST_TARGETS): % : $(TEST_DIR)/%.cpp
 	mkdir -p $(OUT_DIR)
@@ -20,9 +25,15 @@ $(EXAMPLE_TARGETS): % : $(EXAMPLE_DIR)/%.cpp
 test: $(TEST_TARGETS)
 	./$(OUT_DIR)/$<
 
+test-coverage: $(TEST_TARGETS)
+	./$(OUT_DIR)/$<
+	mkdir -p $(COVERAGE_DIR)
+	mv *.gcda *.gcno $(COVERAGE_DIR)
+
 clean:
 	rm -f $(addprefix $(OUT_DIR)/, $(TEST_TARGETS))
 	rmdir --ignore-fail-on-non-empty $(OUT_DIR)
-	rm -f *.gcda *.gcno *.gcov
-
-.PHONY: test clean
+	rm -f $(addprefix $(COVERAGE_DIR)/, *.gcda *.gcno)
+	rmdir --ignore-fail-on-non-empty $(COVERAGE_DIR)
+	
+.PHONY: test test-coverage clean

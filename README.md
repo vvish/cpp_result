@@ -1,5 +1,7 @@
 # The minimalist error handling framework
 
+[![codecov](https://codecov.io/gh/vvish/cpp_result/branch/master/graph/badge.svg)](https://codecov.io/gh/vvish/cpp_result)
+
 ## Motivation
 
 The framework makes an attempt to provide resource efficient ways to define 
