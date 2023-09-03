@@ -21,7 +21,7 @@ encapsulation.
 
 ## Build
 
-The library requires C++17.
+The library requires C++14.
 Makefile in the project root can be used to build and execute unit-tests.
 
 To build and execute tests the following make target can be used:
