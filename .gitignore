@@ -35,6 +35,7 @@
 bin/
 
 # Coverage dir
+build/
 coverage/
 
 # Coverage/profiling artifacts

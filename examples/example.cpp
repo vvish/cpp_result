@@ -50,6 +50,9 @@ public:
     }
 };
 
+constexpr Result BackendClient::rpcError;
+constexpr Result BackendClient::wrongQuery;
+
 // shared error codes can be used
 constexpr uint8_t backendAccessErrorCode = 2;
 constexpr auto backendAccessError
@@ -89,6 +92,7 @@ AggregateResult retrieveData()
     auto result = backend_access::retrieveRemoteData();
     if (respp::is_success(result)) {
         // positive case
+        return {};
     } else {
         // append error from upper layer
         return result << dataRetrievalError;

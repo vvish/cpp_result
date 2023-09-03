@@ -77,16 +77,15 @@ constexpr uint8_t sum_widths()
 template <typename Cat, typename C, typename... Cs>
 struct count_bits_before {
     static constexpr int value
-        = std::is_same_v<Cat, C>
-              ? 0
-              : (count_bits_before<Cat, Cs...>::value >= 0)
-                    ? C::bit_width + count_bits_before<Cat, Cs...>::value
-                    : -1;
+        = std::is_same<Cat, C>::value ? 0
+          : (count_bits_before<Cat, Cs...>::value >= 0)
+              ? C::bit_width + count_bits_before<Cat, Cs...>::value
+              : -1;
 };
 
 template <typename Cat, typename C>
 struct count_bits_before<Cat, C> {
-    static constexpr int value = std::is_same_v<Cat, C> ? 0 : -1;
+    static constexpr int value = std::is_same<Cat, C>::value ? 0 : -1;
 };
 
 template <typename Ut, uint8_t Offset, typename C>
@@ -144,18 +143,18 @@ struct result_t {
         bits_occupied_by_categories <= detail::sizeof_in_bits_v<Ut>,
         "The underlying type is too small to contain category");
 
-    static constexpr result_t success{0};
+    static constexpr result_t success{};
 
     underlaying_type result;
 
-    static constexpr result_t make(Cs const &... categories, Ut code)
+    static constexpr result_t make(Cs const &...categories, Ut code)
     {
         auto const r
             = detail::place_category<underlaying_type, 0>({}, categories...);
 
         constexpr auto bits_remaining_for_code
-            = detail::sizeof_in_bits_v<
-                  underlaying_type> - bits_occupied_by_categories;
+            = detail::sizeof_in_bits_v<underlaying_type>
+              - bits_occupied_by_categories;
         constexpr auto mask
             = ~detail::mask<underlaying_type, 0, bits_remaining_for_code>;
         return result_t{static_cast<underlaying_type>(r | (code & mask))};
@@ -166,6 +165,9 @@ struct result_t {
         return lhs.result == rhs.result;
     }
 };
+
+template <typename Ut, typename... Cs>
+constexpr result_t<Ut, Cs...> result_t<Ut, Cs...>::success;
 
 template <typename Result>
 class error_iterator_t;
@@ -181,8 +183,8 @@ struct place_while_space_is_available {
             = sizeof(Ut) / sizeof(result_underlaying_type);
         for (auto shift_value = 0; shift_value < capacity; ++shift_value) {
             auto const shift_in_bits
-                = detail::sizeof_in_bits_v<
-                      result_underlaying_type> * shift_value;
+                = detail::sizeof_in_bits_v<result_underlaying_type>
+                  * shift_value;
             auto const slot_value = static_cast<result_underlaying_type>(
                 container >> shift_in_bits);
             if (!slot_value) {
@@ -203,8 +205,8 @@ struct replace_topmost {
         auto shift_value = 0;
         for (; shift_value < capacity - 1; ++shift_value) {
             auto const shift_in_bits
-                = detail::sizeof_in_bits_v<
-                      result_underlaying_type> * shift_value;
+                = detail::sizeof_in_bits_v<result_underlaying_type>
+                  * shift_value;
             auto const slot_value = static_cast<result_underlaying_type>(
                 container >> shift_in_bits);
             if (!slot_value) {
@@ -212,8 +214,7 @@ struct replace_topmost {
             }
         }
         auto const shift_in_bits
-            = detail::sizeof_in_bits_v<
-                  typename Result::underlaying_type> * shift_value;
+            = detail::sizeof_in_bits_v<result_underlaying_type> * shift_value;
 
         container &= detail::generate_mask<Ut>(
             shift_in_bits, detail::sizeof_in_bits_v<result_underlaying_type>);
@@ -348,6 +349,10 @@ struct aggregate_result_t {
         return lhs.container == rhs.container;
     }
 };
+
+template <typename Ut, typename Result, typename PlacementStrategy>
+constexpr aggregate_result_t<Ut, Result, PlacementStrategy>
+    aggregate_result_t<Ut, Result, PlacementStrategy>::success;
 
 template <typename CatToFind, typename Ut, typename... Cs>
 constexpr CatToFind get_category(result_t<Ut, Cs...> result)
